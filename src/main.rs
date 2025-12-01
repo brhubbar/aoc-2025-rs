@@ -18,7 +18,7 @@ fn main() {
     println!("Part1: {result}");
 
     let result = today::part2(&contents);
-    println!("Part1: {result}");
+    println!("Part2: {result}");
 }
 
 mod today;
