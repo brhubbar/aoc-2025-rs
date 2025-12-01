@@ -1,2 +1,4 @@
-pub use crate::day1::part1;
-pub use crate::day1::part2;
+mod day1;
+mod day2;
+
+pub use day1::*;

@@ -21,7 +21,5 @@ fn main() {
     println!("Part1: {result}");
 }
 
-mod day1;
-mod day2;
 mod today;
 mod utils;
