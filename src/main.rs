@@ -1,3 +1,26 @@
+use std::{env, process};
+
 fn main() {
-    println!("Hello, world!");
+    let mut args = env::args();
+    // Path to executable.
+    let _ = args.next();
+    let Some(path) = args.next() else {
+        println!("Please provide a PATH argument!");
+        process::exit(1)
+    };
+
+    let contents = utils::load(&path).unwrap_or_else(|err| {
+        println!("Something went wrong loading the file! {err}");
+        process::exit(1)
+    });
+
+    let result = day1::part1(&contents);
+    println!("Part1: {result}");
+
+    let result = day1::part2(&contents);
+    println!("Part1: {result}");
 }
+
+mod day1;
+mod day2;
+mod utils;
