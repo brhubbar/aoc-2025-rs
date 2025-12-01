@@ -14,13 +14,14 @@ fn main() {
         process::exit(1)
     });
 
-    let result = day1::part1(&contents);
+    let result = today::part1(&contents);
     println!("Part1: {result}");
 
-    let result = day1::part2(&contents);
+    let result = today::part2(&contents);
     println!("Part1: {result}");
 }
 
 mod day1;
 mod day2;
+mod today;
 mod utils;
