@@ -1,3 +1,4 @@
+use log::{debug, trace, warn};
 /// Add together all ids in the ranges which have the same first and second halves.
 /// E.g. 4040, 12431243.
 ///
@@ -19,30 +20,25 @@ pub fn part1(contents: &str) -> u64 {
         let high = ends
             .next()
             .expect("Range should take the shape {low}-{high}");
-        // print!("{low}, {high}: ");
+        trace!(target: "part1", "{low}, {high}");
         let (low, high) = filter_range(low, high);
         if low == "0" && high == "0" {
-            // println!("!! SKIPPING");
+            warn!(target: "part1", "!! SKIPPING {low}-{high}");
             continue;
         }
-        let range = high.parse::<u64>().expect("{high} should be a number.")
-            - low.parse::<u64>().expect("{low} should be a number.");
-        // println!("{range}");
 
         let low = split_num(low, true);
         let high = split_num(high, false);
-        let range = high - low;
-        // println!("{low} - {high}: {range}");
+        trace!(target: "part1", "{low}-{high}");
 
         for x in low..high {
-            // print!("{x},");
+            trace!("{x},");
             let x = x.to_string();
             let mut id = String::new();
             id.push_str(&x);
             id.push_str(&x);
             sum += id.parse::<u64>().expect("id should be numeric.")
         }
-        // println!();
     }
     sum
 }
@@ -71,10 +67,10 @@ fn split_num(num: &str, is_low: bool) -> u64 {
     let len: u32 = num.len().try_into().expect("Length should fit into a u32.");
     let num = if len % 2 == 1 {
         if is_low {
-            // println!("! ROUNDING UP");
+            debug!("! ROUNDING UP");
             (10_u64.pow(len)).to_string()
         } else {
-            // println!("! ROUNDING DOWN");
+            debug!("! ROUNDING DOWN");
             ((10_u64.pow(len - 1)) - 1).to_string()
         }
     } else {
@@ -86,7 +82,7 @@ fn split_num(num: &str, is_low: bool) -> u64 {
     let mut first_half: u64 = num[..half].parse().expect("Num should parse to a u64.");
     let second_half: u64 = num[half..].parse().expect("Num should parse to a u64.");
 
-    // println!("{num} ({len}) -> {first_half} {second_half}");
+    debug!("{num} ({len}) -> {first_half} {second_half}");
 
     if is_low && first_half < second_half || !is_low && first_half <= second_half {
         first_half += 1;
