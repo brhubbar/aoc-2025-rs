@@ -27,5 +27,5 @@ fn main() {
     println!("Part2: {result}");
 }
 
-mod today;
+pub mod today;
 mod utils;

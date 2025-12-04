@@ -1,4 +1,4 @@
-use log::{debug, info, trace, warn};
+use log::debug;
 /// Generate an equivalent array of scores. The score for a space is the number of adjacent
 /// rolls. Iterate through the array, for each '@', add 1 to the score of the surrounding spaces. Do
 /// that by computing the indices forward and backward, truncating out-of-bounds ones.

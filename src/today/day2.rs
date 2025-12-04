@@ -9,6 +9,30 @@ use log::{debug, trace, warn};
 ///       digits.
 /// - Take the first half of the number (e.g. 40 from 4000)
 /// - If the first half is < second half, round up by 1. E.g. (4050 -> 40 < 50 -> 41)
+///
+/// Given 40, multiply by 101 to get 4040
+/// Given 400, multiply by 1001 to get 400400.
+/// So for 40-51, I need (40+41+42+...) * 101.
+///
+/// To do this mathematically, 4000 / x = 40, x = 100 = 10**2
+///
+/// The minimum number for 4 digits is 10**(n_digits/2-1) = 10**1
+///
+/// To convert from half to full: half * ((minimum_for_n_digits * 10) + 1)
+///                          e.g. 40   * ((10**1 * 10) + 1)
+///                          e.g. 40   * ((10**2) + 1)
+///                          e.g. 40   * ((101)
+///                          e.g. 4040
+///
+/// To convert from full to half: full / (minimum_for_n_digits * 10)
+///                          e.g. 4000 / (10**1 * 10)
+///                          e.g. 4000 / (10**2)
+///                          e.g. 40
+///
+/// To build the bounds, build the low and high minimum numbers. If those are outside the range of
+/// the numbers, adjust the halves by one inward to the range.
+///
+///
 pub fn part1(contents: &str) -> u64 {
     let spans = contents.trim().split(',');
     let mut sum: u64 = 0;
@@ -42,8 +66,82 @@ pub fn part1(contents: &str) -> u64 {
     }
     sum
 }
-pub fn part2(contents: &str) -> u32 {
-    1
+
+/// So do this again, but the sequence repeats two or more times - therefore, no longer working with
+/// just halves.
+///
+/// 40000
+///
+/// - 44444
+///
+/// For odd lengths, it's just a single digit
+///
+/// 400_000 - 500_000
+///
+/// - 4 4 4 4 4 4
+/// - 40 40 40
+/// - 404 404
+///
+/// 450_000 - 500_000
+///
+/// - 45 45 45
+/// - 450 450
+///
+/// So I think I can re-use my string manipulation, I just have to push more times.
+pub fn part2(contents: &str) -> u64 {
+    let valid_component_lengths: Vec<Vec<u32>> = vec![
+        vec![],        // 0
+        vec![],        // 1
+        vec![1],       // 2
+        vec![1],       // 3
+        vec![1, 2],    // 4
+        vec![1],       // 5
+        vec![1, 3],    // 6
+        vec![1],       // 7
+        vec![1, 2, 4], // 8
+        vec![1, 3],    // 9
+        vec![1, 2, 5], // 10
+    ];
+
+    let spans = contents.trim().split(',');
+    let mut sum: u64 = 0;
+    for span in spans {
+        let mut ends = span.split('-');
+        let low = ends
+            .next()
+            .expect("Range should take the shape {low}-{high}");
+        let high = ends
+            .next()
+            .expect("Range should take the shape {low}-{high}");
+        trace!(target: "part2", "{low}, {high}");
+        let (low, high) = filter_range(low, high);
+        if low == "0" && high == "0" {
+            warn!(target: "part2", "!! SKIPPING {low}-{high}");
+            continue;
+        }
+
+        let len = high.len();
+        for valid_component_length in &valid_component_lengths[len] {
+            let substring_length: usize = (valid_component_length * 2)
+                .try_into()
+                .expect("Should fit in a usize.");
+            let low = split_num(&truncate(low, substring_length), true);
+            let high = split_num(&truncate(high, substring_length), false);
+            trace!(target: "part2", "Parts: {low}-{high}");
+
+            for x in low..high {
+                trace!(target: "part2", "Part: {x}");
+                let x = x.to_string();
+                let mut id = String::new();
+                for _ in 0..(len / (substring_length / 2)) {
+                    id.push_str(&x);
+                }
+                trace!(target: "part2", "Id: {id}");
+                sum += id.parse::<u64>().expect("id should be numeric.")
+            }
+        }
+    }
+    sum
 }
 
 /// Check if the range can possibly have a repeated number in it (there is a number with an even
@@ -89,4 +187,8 @@ fn split_num(num: &str, is_low: bool) -> u64 {
     };
 
     first_half
+}
+
+fn truncate(string: &str, length: usize) -> String {
+    String::from_iter(string.chars().take(length))
 }

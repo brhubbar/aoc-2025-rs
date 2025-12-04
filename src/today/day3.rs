@@ -1,4 +1,4 @@
-use log::{debug, trace, warn};
+use log::{debug, trace};
 use std::cmp;
 
 pub fn part1(contents: &str) -> u64 {
