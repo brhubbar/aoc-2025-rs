@@ -146,6 +146,7 @@ pub fn part1(contents: &str) -> u32 {
 ///
 /// 399602954925847 is too high
 /// 356792272643926 is too high
+/// 345995423801866
 pub fn part2(contents: &str) -> u128 {
     let mut split = contents.split("\n\n").take(2);
 
@@ -174,9 +175,19 @@ pub fn part2(contents: &str) -> u128 {
 
     let mut sum = 0;
 
-    for idx in 0..ranges.len() {
+    'outer: for idx in 0..ranges.len() {
         let &Range(mut lower, mut upper) = &ranges[idx];
         debug!(target: "part2", "start {lower}-{upper}");
+
+        // Skip any ranges which lie fully within (not sharing a boundary) another range. I
+        // already account for ones that share a boundary when looking forward. Since this is
+        // sorted, it can only be fully consumed by a range before it.
+        for other_range in &ranges[0..idx] {
+            if lower > other_range.0 && upper < other_range.1 {
+                continue 'outer;
+            }
+        }
+
         for other_range in &ranges[idx + 1..] {
             if lower >= other_range.0 && lower <= other_range.1 {
                 lower = other_range.1 + 1;
