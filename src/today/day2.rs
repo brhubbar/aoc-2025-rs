@@ -94,21 +94,21 @@ pub fn part2(contents: &str) -> u128 {
         let hi: u128 = high.parse().expect("Should be a number.");
 
         for length in low.len()..high.len() + 1 {
-            let mut rep_counts = vec![0; (length / 2 + 1) as usize];
+            let mut rep_counts = vec![0; length / 2 + 1];
 
-            for l in 1..(length as u128 / 2 + 1) {
-                rep_counts[l as usize] = sum_rep(lo, hi, length as u128, l)
+            for l in 1..(length / 2 + 1) {
+                rep_counts[l] = sum_rep(lo, hi, length as u128, l as u128)
             }
             for l in 1..(length / 2 + 1) {
                 if !length.is_multiple_of(l) {
                     continue;
                 }
 
-                ret += rep_counts[l as usize];
+                ret += rep_counts[l];
 
                 for x in 1..l {
                     if l.is_multiple_of(x) {
-                        ret -= rep_counts[x as usize];
+                        ret -= rep_counts[x];
                     }
                 }
             }
@@ -116,28 +116,6 @@ pub fn part2(contents: &str) -> u128 {
     }
     ret
 }
-/// Trying a closed formula solution from reddit.
-/// https://www.reddit.com/r/adventofcode/comments/1pcbgai/2025_day_2_day_2_should_be_easy_right_closed/
-///
-/// p(r,j) = ( 10^((j+1)r) - 1 ) / ( 10^(j+1) - 1 )
-/// r = n_repeats
-/// j = n_digits_to_repeat
-fn repeater(n_repeats: u32, n_digits_to_repeat: u32) -> u128 {
-    (10u128.pow((n_digits_to_repeat) * n_repeats) - 1) / (10u128.pow(n_digits_to_repeat) - 1)
-}
-
-fn first_exceeding_pattern(
-    number_to_exceed: u128,
-    n_repeats: u32,
-    n_digits_to_repeat: u32,
-) -> u128 {
-    std::cmp::min(
-        number_to_exceed.div_ceil(repeater(n_repeats, n_digits_to_repeat)),
-        10u128.pow(n_digits_to_repeat),
-    )
-}
-
-// Blah! Mobius? Huh?
 
 /// Copying a different solution from jimm89:
 /// https://github.com/jimm89/AdventOfCode2025/blob/main/Day%202/Day%202.ipynb
@@ -158,7 +136,7 @@ fn sum_rep(lo: u128, hi: u128, length: u128, rep: u128) -> u128 {
         min = lo;
         min /= (lo_rep * 10).pow((rep - 1) as u32);
         let mut test = min;
-        for _ in 0..rep {
+        for _ in 0..rep - 1 {
             test = test * (10 * lo_rep) + min
         }
         if test < lo {
