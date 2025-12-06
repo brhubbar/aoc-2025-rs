@@ -8,6 +8,7 @@ pub fn part2(contents: &str) -> u32 {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use log::LevelFilter;
 
     const INPUT: &str = "123 328  51 64
  45 64  387 23
@@ -17,11 +18,17 @@ mod tests {
 
     #[test]
     fn test_part1() {
+        env_logger::Builder::new()
+            .filter_level(LevelFilter::Trace)
+            .init();
         assert_eq!(part1(INPUT), 4277556);
     }
 
     #[test]
     fn test_part2() {
+        env_logger::Builder::new()
+            .filter_level(LevelFilter::Trace)
+            .init();
         assert_eq!(part2(INPUT), 1);
     }
 }
