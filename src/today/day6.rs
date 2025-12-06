@@ -43,34 +43,43 @@ pub fn part2(contents: &str) -> u64 {
     ops_map.insert("*", u64::saturating_mul);
     ops_map.insert("+", u64::saturating_add);
 
-    // Can't trim because whitespace is meaningful, so just skip the first one.
-    let mut iterator = contents.split('\n').rev().skip(1);
-    let mut operations: Vec<char> = iterator
+    let mut iterator = contents.trim().split('\n').rev();
+    let operations: Vec<char> = iterator
         .next()
         .expect("Should have a line.")
         .chars()
         .collect();
     trace!("Ops: {operations:?}");
-    let mut lines: Vec<Vec<char>> = iterator.map(|line| line.chars().collect()).collect();
+    // Flip the lines upside down so most-significant digit comes first.
+    let lines: Vec<Vec<char>> = iterator.map(|line| line.chars().collect()).rev().collect();
     trace!("Lines: {lines:?}");
+
+    let length = lines
+        .iter()
+        .map(|line| line.len())
+        .max()
+        .expect("Should compute a max.");
 
     let mut sum = 0;
 
-    while !operations.is_empty() {
+    let mut idx_iterator = (0..length).rev();
+
+    'outer: loop {
         let mut numbers: Vec<u64> = Vec::new();
         // Popping from the right.
         let mut operation: char = ' ';
 
         while operation == ' ' {
-            operation = operations.pop().expect("Should still have contents");
+            let Some(idx) = idx_iterator.next() else {
+                break 'outer;
+            };
+            // Here we account for varying lengths of arguments due to whitespace trimming.
+            operation = *operations.get(idx).unwrap_or(&' ');
             numbers.push(
-                String::from_iter(lines.iter_mut().map(|line| {
-                    line.pop()
-                        .expect("Should be the same length as operations.")
-                }))
-                .trim()
-                .parse()
-                .expect("Should be a number"),
+                String::from_iter(lines.iter().map(|line| line.get(idx).unwrap_or(&' ')))
+                    .trim()
+                    .parse()
+                    .expect("Should be a number"),
             );
         }
 
@@ -86,6 +95,12 @@ pub fn part2(contents: &str) -> u64 {
             }
             _ => panic!("Unexpected operation!"),
         }
+
+        // Skip the empty column after an operator.
+        match idx_iterator.next() {
+            Some(_) => (),
+            None => break 'outer,
+        };
     }
 
     sum
