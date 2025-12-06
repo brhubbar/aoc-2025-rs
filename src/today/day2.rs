@@ -1,4 +1,4 @@
-use log::{debug, trace, warn};
+use log::{debug, trace};
 /// Add together all ids in the ranges which have the same first and second halves.
 /// E.g. 4040, 12431243.
 ///
@@ -44,20 +44,20 @@ pub fn part1(contents: &str) -> u64 {
         let high = ends
             .next()
             .expect("Range should take the shape {low}-{high}");
-        // print!("{low}, {high}: ");
+        trace!("{low}, {high}: ");
         let (low, high) = filter_range(low, high);
         if low == "0" && high == "0" {
-            // println!("!! SKIPPING");
+            debug!("!! SKIPPING");
             continue;
         }
         let range = high.parse::<u64>().expect("{high} should be a number.")
             - low.parse::<u64>().expect("{low} should be a number.");
-        // println!("{range}");
+        trace!("{range}");
 
         let low = split_num(low, true);
         let high = split_num(high, false);
         let range = high - low;
-        // println!("{low} - {high}: {range}");
+        trace!("{low} - {high}: {range}");
 
         for x in low..high {
             // print!("{x},");
