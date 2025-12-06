@@ -36,8 +36,59 @@ pub fn part1(contents: &str) -> u64 {
 
     columns.into_iter().sum()
 }
-pub fn part2(contents: &str) -> u32 {
-    1
+
+/// The operator is left justified.
+pub fn part2(contents: &str) -> u64 {
+    let mut ops_map: HashMap<&str, fn(u64, u64) -> u64> = HashMap::new();
+    ops_map.insert("*", u64::saturating_mul);
+    ops_map.insert("+", u64::saturating_add);
+
+    // Can't trim because whitespace is meaningful, so just skip the first one.
+    let mut iterator = contents.split('\n').rev().skip(1);
+    let mut operations: Vec<char> = iterator
+        .next()
+        .expect("Should have a line.")
+        .chars()
+        .collect();
+    trace!("Ops: {operations:?}");
+    let mut lines: Vec<Vec<char>> = iterator.map(|line| line.chars().collect()).collect();
+    trace!("Lines: {lines:?}");
+
+    let mut sum = 0;
+
+    while !operations.is_empty() {
+        let mut numbers: Vec<u64> = Vec::new();
+        // Popping from the right.
+        let mut operation: char = ' ';
+
+        while operation == ' ' {
+            operation = operations.pop().expect("Should still have contents");
+            numbers.push(
+                String::from_iter(lines.iter_mut().map(|line| {
+                    line.pop()
+                        .expect("Should be the same length as operations.")
+                }))
+                .trim()
+                .parse()
+                .expect("Should be a number"),
+            );
+        }
+
+        trace!("Numbers: {numbers:?}");
+        trace!("Operation: {operation}");
+        // Operation is now + or *.
+        match operation {
+            '*' => {
+                sum += numbers.iter().product::<u64>();
+            }
+            '+' => {
+                sum += numbers.iter().sum::<u64>();
+            }
+            _ => panic!("Unexpected operation!"),
+        }
+    }
+
+    sum
 }
 
 #[cfg(test)]
@@ -53,9 +104,6 @@ mod tests {
 
     #[test]
     fn test_part1() {
-        env_logger::Builder::new()
-            .filter_level(LevelFilter::Trace)
-            .init();
         assert_eq!(part1(INPUT), 4277556);
     }
 
@@ -64,6 +112,6 @@ mod tests {
         env_logger::Builder::new()
             .filter_level(LevelFilter::Trace)
             .init();
-        assert_eq!(part2(INPUT), 1);
+        assert_eq!(part2(INPUT), 3263827);
     }
 }
