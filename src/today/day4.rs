@@ -118,3 +118,30 @@ fn get_adjacent_idxs(idx: usize, width: usize, length: usize) -> Vec<usize> {
     // above.
     adjacents.into_iter().filter(|x| *x < length).collect()
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    const INPUT: &str = "..@@.@@@@.
+@@@.@.@.@@
+@@@@@.@.@@
+@.@@@@..@.
+@@.@@@@.@@
+.@@@@@@@.@
+.@.@.@.@@@
+@.@@@.@@@@
+.@@@@@@@@.
+@.@.@@@.@.
+";
+
+    #[test]
+    fn test_part1() {
+        assert_eq!(part1(INPUT), 13);
+    }
+
+    #[test]
+    fn test_part2() {
+        assert_eq!(part2(INPUT), 43);
+    }
+}

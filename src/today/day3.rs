@@ -77,3 +77,24 @@ fn max_char(string: &str) -> Found {
         value: max,
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    const INPUT: &str = "987654321111111
+811111111111119
+234234234234278
+818181911112111
+";
+
+    #[test]
+    fn test_part1() {
+        assert_eq!(part1(INPUT), 357);
+    }
+
+    #[test]
+    fn test_part2() {
+        assert_eq!(part2(INPUT), 3121910778619);
+    }
+}

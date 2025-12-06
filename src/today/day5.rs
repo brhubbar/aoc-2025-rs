@@ -212,3 +212,31 @@ pub fn part2(contents: &str) -> u128 {
 
 #[derive(Debug)]
 struct Range(u128, u128);
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    const INPUT: &str = "3-5
+10-14
+16-20
+12-18
+
+1
+5
+8
+11
+17
+32
+";
+
+    #[test]
+    fn test_part1() {
+        assert_eq!(part1(INPUT), 3);
+    }
+
+    #[test]
+    fn test_part2() {
+        assert_eq!(part2(INPUT), 14);
+    }
+}
