@@ -1,17 +1,8 @@
-use kiddo::{KdTree, SquaredEuclidean};
 use log::trace;
 use std::collections::HashSet;
 
 /// 7106 is too low
 pub fn part1(contents: &str) -> usize {
-    // let tree: KdTree<FixedU32<U0>, 3> = Vec::from_iter(contents.trim().split('\n').map(|line| {
-    //     Vec::from_iter(
-    //         line.split(',')
-    //             .map(|num| FixedU32::from(num.parse::<u32>().expect("Should be a number."))),
-    //     )
-    // }))
-    // .into();
-
     let points: Vec<[i64; 3]> = Vec::from_iter(contents.trim().split('\n').map(|line| {
         let mut numbers = line
             .split(',')
@@ -23,19 +14,9 @@ pub fn part1(contents: &str) -> usize {
         ]
     }));
 
-    // let tree: KdTree<_, 3> = (&points).into();
-
     let mut distances: Vec<Distance> = Vec::with_capacity(points.len() / 2 * (points.len() + 1));
 
     for (idx_a, a) in points.iter().enumerate() {
-        // let nearest = tree
-        //     .nearest_n::<SquaredEuclidean>(point, 2)
-        //     .pop()
-        //     .expect("Should have two results.")
-        //     .item;
-
-        // trace!("{idx}: {nearest}");
-
         for (idx_b, b) in points.iter().enumerate().skip(idx_a + 1) {
             let dist = (a[0] - b[0]).pow(2) + (a[1] - b[1]).pow(2) + (a[2] - b[2]).pow(2);
 
