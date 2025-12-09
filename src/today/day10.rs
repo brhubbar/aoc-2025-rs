@@ -9,15 +9,7 @@ pub fn part2(contents: &str) -> u32 {
 mod tests {
     use super::*;
 
-    const INPUT: &str = "7,1
-11,1
-11,7
-9,7
-9,5
-2,5
-2,3
-7,3
-";
+    const INPUT: &str = "";
 
     #[test]
     fn test_part1() {
