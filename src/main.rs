@@ -3,9 +3,7 @@ use std::{env, process};
 
 fn main() {
     env_logger::Builder::new()
-        .filter(Some("part1"), LevelFilter::Warn)
-        .filter(Some("part2"), LevelFilter::Warn)
-        .filter(None, LevelFilter::Warn)
+        .filter_level(LevelFilter::Off)
         .init();
     let mut args = env::args();
     // Path to executable.
