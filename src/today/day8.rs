@@ -82,8 +82,86 @@ pub fn part1(contents: &str) -> usize {
     sizes.sort();
     sizes[sizes.len() - 3..].iter().product()
 }
-pub fn part2(contents: &str) -> u32 {
-    1
+pub fn part2(contents: &str) -> i64 {
+    let points: Vec<[i64; 3]> = Vec::from_iter(contents.trim().split('\n').map(|line| {
+        let mut numbers = line
+            .split(',')
+            .map(|x| x.parse::<i64>().expect("Should be a number."));
+        [
+            numbers.next().expect("Should have a first number"),
+            numbers.next().expect("Should have a second number"),
+            numbers.next().expect("Should have a third number"),
+        ]
+    }));
+
+    let mut distances: Vec<Distance> = Vec::with_capacity(points.len() / 2 * (points.len() + 1));
+
+    for (idx_a, a) in points.iter().enumerate() {
+        for (idx_b, b) in points.iter().enumerate().skip(idx_a + 1) {
+            let dist = (a[0] - b[0]).pow(2) + (a[1] - b[1]).pow(2) + (a[2] - b[2]).pow(2);
+
+            distances.push(Distance {
+                a: idx_a,
+                b: idx_b,
+                dist,
+            });
+        }
+    }
+
+    distances.sort_by_key(|x| x.dist);
+    for distance in &distances {
+        trace!("{distance}");
+    }
+
+    let mut circuits: Vec<HashSet<usize>> = Vec::new();
+
+    for distance in distances.iter() {
+        trace!("Circuits: {circuits:?}");
+        // Each end of the connection may be in a separate circuit.
+        let mut sets: Vec<&mut HashSet<usize>> = circuits
+            .iter_mut()
+            .filter(|circuit| circuit.contains(&distance.a) || circuit.contains(&distance.b))
+            .collect();
+        trace!("Sets: {sets:?}");
+
+        let set: &mut HashSet<usize> = match sets.len() {
+            0 => {
+                // Neither is in a circuit; create a new one.
+                let set = HashSet::new();
+                circuits.push(set);
+                circuits.last_mut().unwrap()
+            }
+            1 => {
+                // One or both are already in a single circuit.
+                sets[0]
+            }
+            2 => {
+                // They are in different circuits; we need to merge them.
+                let set = sets.pop().expect("The length is known to be 2");
+                let other = sets.pop().expect("The length is known to be 2");
+                // Borrowing rules don't let me pop this out of circuits, so I just drain it and
+                // filter it out later.
+                set.extend(other.drain());
+                set
+            }
+            _ => {
+                panic!("More than two sets found!");
+            }
+        };
+
+        set.insert(distance.a);
+        set.insert(distance.b);
+
+        trace!("{circuits:?}");
+
+        // Clean out empty sets from merging.
+        circuits.retain(|x| !x.is_empty());
+
+        if circuits.len() == 1 && circuits[0].len() == points.len() {
+            return points[distance.a][0] * points[distance.b][0];
+        }
+    }
+    panic!("We have connected every node to every other node. Get it together.")
 }
 
 struct Distance {
@@ -137,6 +215,6 @@ mod tests {
         let _ = env_logger::Builder::new()
             .filter_module("advent_of_code_2025::today::day8", log::LevelFilter::Trace)
             .try_init();
-        assert_eq!(part2(INPUT), 1);
+        assert_eq!(part2(INPUT), 25272);
     }
 }
