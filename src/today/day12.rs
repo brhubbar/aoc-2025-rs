@@ -9,17 +9,7 @@ pub fn part2(contents: &str) -> u32 {
 mod tests {
     use super::*;
 
-    const INPUT: &str = "aaa: you hhh
-you: bbb ccc
-bbb: ddd eee
-ccc: ddd eee fff
-ddd: ggg
-eee: out
-fff: out
-ggg: out
-hhh: ccc fff iii
-iii: out
-";
+    const INPUT: &str = "";
 
     #[test]
     fn test_part1() {
