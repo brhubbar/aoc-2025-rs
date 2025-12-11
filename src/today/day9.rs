@@ -52,7 +52,7 @@ pub fn part2(contents: &str) -> u64 {
             .get(idx.wrapping_sub(1))
             .unwrap_or_else(|| points.iter().last().expect("Should not be empty."));
         let r = points.get(idx + 1).unwrap_or_else(|| &points[0]);
-        corners.push(Corner::build(&points[idx], l, r));
+        corners.push(Corner::new(&points[idx], l, r));
     }
 
     let mut max = 0;
@@ -115,7 +115,7 @@ struct Corner {
 }
 
 impl Corner {
-    fn build(center: &Rc<Point>, a: &Rc<Point>, b: &Rc<Point>) -> Self {
+    fn new(center: &Rc<Point>, a: &Rc<Point>, b: &Rc<Point>) -> Self {
         Self {
             p: Rc::clone(center),
             edges: vec![Rc::clone(a), Rc::clone(b)],

@@ -6,6 +6,7 @@ version = 4
 name = "advent_of_code_2025"
 version = "0.1.0"
 dependencies = [
+ "combinations",
  "env_logger",
  "log",
  "regex",
@@ -75,6 +76,12 @@ name = "colorchoice"
 version = "1.0.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b05b61dc5112cbb17e4b6cd61790d9845d13888356391624cbe7e41efeac1e75"
+
+[[package]]
+name = "combinations"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "728b7ab3119b5167cc60a4aad16b6086b762278f5571cc650e7eed2e89a23a15"
 
 [[package]]
 name = "env_filter"
