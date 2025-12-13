@@ -180,6 +180,9 @@ fn split_num(num: &str, is_low: bool) -> u64 {
 
 /// Copying a different solution from jimm89:
 /// https://github.com/jimm89/AdventOfCode2025/blob/main/Day%202/Day%202.ipynb
+///
+/// Some other solutions here:
+/// https://github.com/edoannunziata/jardin/blob/master/misc/Aoc25Day2BonusRound.ipynb
 fn sum_rep(lo: u128, hi: u128, length: u128, rep: u128) -> u128 {
     if !length.is_multiple_of(rep) {
         return 0;
